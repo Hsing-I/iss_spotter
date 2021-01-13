@@ -28,4 +28,28 @@ const fetchMyIP = function(callback) {
   });
 };
 
-module.exports = { fetchMyIP };
+const fetchCoordsByIP = function(ip, callback) {
+  request(`https://freegeoip.app/json/${ip}`, (error, response, body) => {
+    console.log('error:', error);
+    console.log('statusCode:', response && response.statusCode);
+    console.log('body:', body);
+    if (error) {
+      callback(error, null);
+      return
+    }
+    if (response.statusCode != 200) {
+      callback(Error(`Status Code ${response.statusCode} when fetching Coordinates for IP: ${body}`), null);
+      return;
+    }
+
+    const latitude = JSON.parse(body).latitude;
+    const longitude = JSON.parse(body).longitude;
+    const coords = { latitude, longitude };
+    callback(null, coords);
+  });
+}
+
+const fetchISSFlyOverTimes = function(coords, callback) {
+  // ...
+};
+module.exports = { fetchMyIP, fetchCoordsByIP };
